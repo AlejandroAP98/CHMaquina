@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHMáquina</title>
+</head>
+<body>
+  <nav class="nav-extended black">
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo center">CHMáquina</a>
+    </div>
+    <div class="nav-content">
+      <ul class="tabs tabs-transparent">
+        <li class="tab">
+          <div class="file-field input-field">
+            <a class="btn black">
+              <span >Cargar</span>
+              <input type="file" id="fileInput">
+              <i class="material-icons left">file_upload</i>
+            </a>
+          </div>
+        </li>
+        <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">directions_walk</i>Paso a paso</a></li>
+        <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">play_arrow</i>Normal</a></li>
+        <li class="tab"><a class="waves-effect waves-light black btn" onclick="mostrarMemoria()"><i class="material-icons left">list</i>Muestra de memoria</a></li>
+        <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">pause</i>Pausa</a></li>
+        <!-- <li class="tab"><a class="waves-effect waves-light black btn" onclick="salir()"><i class="material-icons left">exit_to_app</i>Salir</a></li> -->
+      </ul>
+    </div>
+  </nav>
+  <div class="imagenes">
+    <img src="cpu.png" alt="CHM-CPU" id="cpuImagen">
+    <img src="monitor.png" alt="CHM-CPU" id="monitorImagen">
+    <img src="impresora.png" alt="CHM-CPU" id="impresoraImagen">
+  </div>
+  <div class="row">
+    <div class="col s5">
+      <h6 id="textProgramMode">Modo <span id="programMode"></span></h6>
+      <div class="col s3.8 white-text">
+        <form action="#">
+          <p class="range-field">
+            <h6 id="text">Memoria : <span id="memoryValor"></span></h6>
+            <input type="range" id="memoryRange" min="3" max="1100" value="60" />
+          </p>
+        </form>
+        <form action="#">
+          <p class="range-field">
+            <h6 id="text">Kernel : <span id="kernelValor"></span></h6>
+            <input type="range" id="kernelRange" min="1" max="1098" value="19" />
+          </p>
+        </form>
+        <h6 id="text">Acumulador: <span id="acumuladorValor"></span></h6>
+        <h6 id="text">Instrucción <span id="instructionLine"></span></h6>
+      </div>
+      <a class="waves-effect waves-light black btn" id="btnPrint"><i class="material-icons center">print</i></a>
+      <div class="card" id="cardScreen">
+        <div class="card-content">
+          <p id="screen" class="white-text"></p>
+        </div>
+      </div>
+      <div class="card" id="cardImpresora">
+        <div class="card-content">
+          <p id="screen" class="white-text"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col s5">
+      <div class="col s2">
+        <div class="card" id="cardFile">
+          <div class="card-content white-text ">
+            CÓDIGO<p id="readFile" class="white-text"></p>
+          </div>
+        </div>
+      </div>
+      <div class="col s2">
+        <div class="card" id="cardVariables">
+          <div class="card-content white-text">
+            VARIABLES<br><p id="readVariables" class="white-text"></p>
+          </div>
+        </div>
+        <div class="card" id="cardEtiquetas">
+          <div class="card-content white-text ">
+            ETIQUETAS<br><p id="readEtiquetas" class="white-text"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col s2" >
+      <div class="card" id="cardMuestraMemoria">
+        <div class="card-content white-text">
+          MEMORIA<br><p id="readMuestraMemoria" class="white-text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="CHM.js"></script>
+</body>
+</html>

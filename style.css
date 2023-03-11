@@ -1,0 +1,192 @@
+body {
+    background-color: #111111;
+}
+
+.imagenes{
+    z-index: -1;
+    position: absolute;
+}
+
+#cpuImagen{
+    position: absolute;
+    width: 410px;
+    top: 0px;
+    left: -100px;
+
+}
+
+#monitorImagen{
+    position:absolute;
+    width: 450px;
+    left: 170px;  
+}
+
+#impresoraImagen{
+    width: 450px;
+    top: 340px;
+    left: 80px;
+    position: absolute;  
+}
+
+#text{
+    position: relative;
+    background-color: #1b1a1ae3;
+    color: #ffffff;
+    font-size: 16px;
+    left: -5px;
+    top: 10px;
+    padding: 5px;
+} 
+
+
+#cardScreen{
+    position: relative;
+    background-color: #000000c2;
+    top: 100px;
+    left:185px;
+    width: 400px;
+    height: 165px;
+}
+
+#cardImpresora{
+    position: absolute;
+    background-color: #ffffff85;
+    top: 560px;
+    left: 180px;
+    width: 245px;
+    height: 100px;
+}
+
+/* ------------------------------------------- */
+
+#cardMuestraMemoria{
+    overflow-x:auto;
+    white-space: nowrap;
+    overflow-y: auto;
+    background-color: #000000;
+    width: 260px;
+    left: 1070px;
+    height: 600px;
+    font-size: 14px;
+    position: absolute;
+    
+}
+
+#cardMuestraMemoria::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+#cardMuestraMemoria::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 10px;
+}
+
+#cardMuestraMemoria::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+#cardFile{
+    overflow-x:auto;
+    white-space: nowrap;
+    overflow-y: auto;
+    background-color: #000000;
+    width: 220px;
+    height: 600px;
+    left: 615px;
+    font-size: 14px;
+    position: absolute;
+   
+}
+
+
+#cardFile::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+  
+#cardFile::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 10px;
+}
+  
+#cardFile::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+
+#cardVariables{
+    background-color: #000000;
+    overflow-x:auto;
+    white-space: nowrap;
+    width: 220px;
+    height: 300px;
+    left: 840px;
+    font-size: 14px;
+    position: absolute;
+}
+
+#cardVariables::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+#cardVariables::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 10px;
+}
+
+#cardVariables::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+#cardEtiquetas{
+    background-color: #000000;
+    overflow-x:auto;
+    white-space: nowrap;
+    width: 220px;
+    left: 840px;
+    height: 292px;
+    top: 420px;
+    font-size: 14px;
+    position: absolute;
+}
+
+#cardEtiquetas::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+#cardEtiquetas::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 10px;
+}
+
+#cardEtiquetas::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+/* ------------------------------------------- */
+
+#textProgramMode{
+    position: absolute;
+    background-color: rgb(0, 0, 0);
+    color: #ffffff;
+    width: 190px;
+    left: 300px;
+    padding: 10px;
+    font-size: 18px;
+    
+}
+
+#btnPrint{
+    position: absolute;
+    top: 540px;
+    left: 110px;
+}
+ 
+
