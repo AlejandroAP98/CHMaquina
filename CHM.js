@@ -44,27 +44,22 @@ document.getElementById("fileInput").addEventListener("change", function() {
             //si la palabra es un nemónico
             if (lista.includes(words[0]) && !retorne){
                 //si se está declarando una variable nueva
-                if (words[0] == "nueva" && words.length == 4) {
+                if (words[0] == "nueva" && words.length >= 3) {
                     if (words[1] == "acumulador") {
-                        console.log("acumulador");
                         erroresArray.push("Error 08 - Nombre reservado - Línea " + (i + 1));
                         sintaxisError = true;
-                    } else if (words[1].length < 255 && esLetra(words[1])) {
+                    } else if (words[1].length < 255 && esLetra(words[1]) && words.length == 4) {
                         if (!(words[1] in diccionarioVariables)) {
                             diccionarioVariables[words[1]] = quitarSlash(words[3]);
                             if (words[2] === "I") {
                                 if (!((Number.isInteger(Number.parseInt(words[3]))) && !isNaN(words[3]) && (!words[3].includes(".")))) {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
                                     sintaxisError = true;
-                                    console.log("error en la declaración entera");
                                 }
                             } else if (words[2] === "R") {
-                                if (!isNaN(Number.parseFloat(words[3])) && !isNaN(words[3])) {
-                                    console.log("variable real creada");
-                                } else {
+                                if (!(!isNaN(Number.parseFloat(words[3])) && !isNaN(words[3]))) {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
                                     sintaxisError = true;
-                                    console.log("error en la declaración real");
                                 }
                             } else if (words[2] === "L") {
                                 if (words[3] === "1\r" || words[3] === "0\r") {
@@ -73,12 +68,36 @@ document.getElementById("fileInput").addEventListener("change", function() {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
                                     sintaxisError = true;
                                 }
+                            }else if (words[2] === "C") {
+                                if (words[3].length >=0) {
+                                    erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
+                                    sintaxisError = true;
+                                }
                             }
                         } else {
                             erroresArray.push("Error 03 - Variable ya declarada - Línea " + (i + 1));
                             sintaxisError = true;
                         }
-                    } else {
+                    }else if(words[1].length < 255 && esLetra(words[1]) && words.length == 3){
+                        
+                        if (!(words[1] in diccionarioVariables)) {
+
+                            if (words[2] === "I\r") {
+                                diccionarioVariables[words[1]] = "0";
+                            } else if (words[2] === "R\r") {
+
+                                diccionarioVariables[words[1]] = "0.0";
+                            } else if (words[2] === "L\r") {
+                                logicas.push(words[1]);
+                                diccionarioVariables[words[1]] = "0";
+                            }else if (words[2] === "C\r") {
+                                diccionarioVariables[words[1]] = " ";
+                            }
+                        } else {
+                            erroresArray.push("Error 03 - Variable ya declarada - Línea " + (i + 1));
+                            sintaxisError = true;
+                        }
+                    }else {
                         erroresArray.push("Error 01 - Error 06 - Sintaxis - Longitud - Línea " + (i + 1));
                         sintaxisError = true;
                     }
@@ -125,10 +144,17 @@ document.getElementById("fileInput").addEventListener("change", function() {
                     }
                 }else if(words[0]==="vaya" && (words.length==2)){
                     vaya[quitarSlash(words[1])]=sizeDocumento+1;
+
                 }else if(words[0]==="vayasi" && (words.length==3)){
                     vayasi[quitarSlash(words[1])]=[(quitarSlash(words[2])), sizeDocumento+1];
-                }else if(words[0]==="Y" || words[0]==="O" && (words.length==4)){
-                    if((!words[1] in logicas) || (!words[2] in logicas)){
+                
+                }else if((words[0]==="Y" || words[0]==="O") && (words.length==4)){
+                    if(!logicas.includes(quitarSlash(words[1])) || (!logicas.includes(quitarSlash(words[2])) || (!logicas.includes(quitarSlash(words[3]))))){ 
+                        erroresArray.push("Error 06 - Variable no declarada - Línea " + (i + 1));
+                        sintaxisError = true;
+                    }
+                }else if(words[0]==="NO" && (words.length==3)){
+                    if(!logicas.includes(quitarSlash(words[1])) || (!logicas.includes(quitarSlash(words[2])))){ 
                         erroresArray.push("Error 06 - Variable no declarada - Línea " + (i + 1));
                         sintaxisError = true;
                     }
@@ -146,7 +172,6 @@ document.getElementById("fileInput").addEventListener("change", function() {
             }
             sizeDocumento++;
         }
-        console.log(logicas);
         //verificar que las etiquetas apunten a una instrucción existente
         Object.entries(diccionarioEtiquetas).forEach(([key, valor]) => {
             if(valor[1]>=sizeDocumento){
