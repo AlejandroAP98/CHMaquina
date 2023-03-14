@@ -31,6 +31,9 @@ document.getElementById("fileInput").addEventListener("change", function() {
     const logicas = [];
     const vaya = {};
     const vayasi = {};
+    const cadena = [];
+    const entero = [];
+    const real = [];
     archivo.readAsText(document.getElementById("fileInput").files[0]);
     archivo.onload = () => {
         //separar por lineas y guardar en un array
@@ -55,11 +58,15 @@ document.getElementById("fileInput").addEventListener("change", function() {
                                 if (!((Number.isInteger(Number.parseInt(words[3]))) && !isNaN(words[3]) && (!words[3].includes(".")))) {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
                                     sintaxisError = true;
+                                }else{
+                                    entero.push(words[1]);
                                 }
                             } else if (words[2] === "R") {
                                 if (!(!isNaN(Number.parseFloat(words[3])) && !isNaN(words[3]))) {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
-                                    sintaxisError = true;
+                                    sintaxisError = true;    
+                                }else{
+                                    real.push(words[1]);
                                 }
                             } else if (words[2] === "L") {
                                 if (words[3] === "1\r" || words[3] === "0\r") {
@@ -69,9 +76,11 @@ document.getElementById("fileInput").addEventListener("change", function() {
                                     sintaxisError = true;
                                 }
                             }else if (words[2] === "C") {
-                                if (words[3].length >=0) {
+                                if (!typeof words[3] === 'string') {
                                     erroresArray.push("Error 02 - Tipo de valor - Línea " + (i + 1));
-                                    sintaxisError = true;
+                                    sintaxisError = true;   
+                                }else{
+                                    cadena.push(words[1]);
                                 }
                             }
                         } else {
@@ -79,9 +88,7 @@ document.getElementById("fileInput").addEventListener("change", function() {
                             sintaxisError = true;
                         }
                     }else if(words[1].length < 255 && esLetra(words[1]) && words.length == 3){
-                        
                         if (!(words[1] in diccionarioVariables)) {
-
                             if (words[2] === "I\r") {
                                 diccionarioVariables[words[1]] = "0";
                             } else if (words[2] === "R\r") {
@@ -101,13 +108,25 @@ document.getElementById("fileInput").addEventListener("change", function() {
                         erroresArray.push("Error 01 - Error 06 - Sintaxis - Longitud - Línea " + (i + 1));
                         sintaxisError = true;
                     }
-                //si se está asignando una instrucción a una variable existente
-                } else if ((words[0] == "cargue" || words[0] == "lea" || words[0] == "sume" || words[0] == "reste" || words[0] == "multiplique" || words[0] == "divida" || words[0] == "potencia" || words[0] == "modulo" || words[0] == "concatene" || words[0] == "elimine" || words[0] == "extraiga" || words[0] == "muestre" || words[0] == "imprima") && (words.length == 2) ) {
+                //si se está asignando una instrucción a una variable existente y validar si tiene un operador válido	
+                } else if ((words[0] == "cargue" || words[0] == "lea" || words[0] == "sume" || words[0] == "reste" || words[0] == "multiplique" || words[0] == "divida" || words[0]==="potencia" || words[0] == "modulo" || words[0] == "concatene" || words[0] == "elimine" || words[0] == "extraiga" || words[0] == "muestre" || words[0] == "imprima" || words[0]==="almacene") && (words.length == 2) ) {
                     if (!((quitarSlash(words[1])) in diccionarioVariables)) {
                         erroresArray.push("Error 06 - Variable no declarada - Línea " + (i + 1));
                         sintaxisError = true;
-                    } else if (words[0] === "divida" && diccionarioVariables[quitarSlash(words[1])] === "0") {
-                        erroresArray.push("Error 04 - División por cero - Línea " + (i + 1));
+                    } else if ((words[0] === "divida" || words[0]==="modulo") && (diccionarioVariables[quitarSlash(words[1])] === "0" || cadena.includes(quitarSlash(words[1])) || logicas.includes(quitarSlash(words[1])))){
+                        erroresArray.push("Error 04 - Error en división  - Línea " + (i + 1));
+                        sintaxisError = true;
+                    }else if (words[0]==="potencia" && (!entero.includes(quitarSlash(words[1])))){
+                        erroresArray.push("Error 09 - Potencia - Línea " + (i + 1));
+                        sintaxisError = true;
+                    }else if((words[0]==="sume" || words[0]==="reste" || words[0]==="multiplique") && (cadena.includes(quitarSlash(words[1])) || logicas.includes(quitarSlash(words[1])))){
+                        erroresArray.push("Error 08 - Operaciones - Línea " + (i + 1));
+                        sintaxisError = true;
+                    }else if((words[0]==="elimine" || words[0]==="concatene") && (!cadena.includes(quitarSlash(words[1])))){   
+                        erroresArray.push("Error 10 - Manejo de cadenas - Línea " + (i + 1));
+                        sintaxisError = true;
+                    }else if(words[0]==="extraiga" && !entero.includes(quitarSlash(words[1]))){   
+                        erroresArray.push("Error 10 - Manejo de cadenas - Línea " + (i + 1));
                         sintaxisError = true;
                     }
                 //si es la instrucción retorne
@@ -164,7 +183,7 @@ document.getElementById("fileInput").addEventListener("change", function() {
                 }
             }else if (!((retorne==true)  || words[0] == "\r" || words[0] == "\n" || words[0] == "\r\n" || words[0] == "\n\r" || words[0] == "" || (words[0].substring(0, 2) === "//"))) {
                 //si la palabra es un salto de linea
-                erroresArray.push("Error de sintaxis en la línea - " + (i + 1));
+                erroresArray.push("Error 01 - Sintaxis - Línea " + (i + 1));
                 sintaxisError = true;
                 
             }else{
@@ -179,13 +198,11 @@ document.getElementById("fileInput").addEventListener("change", function() {
                 sintaxisError = true;   
             }
         });
-
         //verificar que las etiquetas no apunten a otra etiqueta 
         if (apuntadorEtiqueta.some((valor=>lineaEtiqueta.includes(valor)))) {
             erroresArray.push("Error 05 - Etiqueta apuntando a otra etiqueta");
             sintaxisError = true;
         }
-
         //verificar que la etiqueta indicada en la sentencia vaya exista en el diccionario de etiquetas
         Object.entries(vaya).forEach(([key, valor]) => {
             if(!(key in diccionarioEtiquetas)){
@@ -193,7 +210,6 @@ document.getElementById("fileInput").addEventListener("change", function() {
                 sintaxisError = true;
             }
         });
-
         //verificar que la etiqueta indicada en la sentencia vayasi exista en el diccionario de etiquetas
         Object.entries(vayasi).forEach(([key, valor]) => {
             if(!(key in diccionarioEtiquetas)){
@@ -205,9 +221,6 @@ document.getElementById("fileInput").addEventListener("change", function() {
                 sintaxisError = true;
             }
         });
-
-
-
         //mostrar errores en pantalla emergente
         if (sintaxisError) {
             alert("SE ENCONTRARON ERRORES!!!");
@@ -223,20 +236,14 @@ document.getElementById("fileInput").addEventListener("change", function() {
         } else {
             asignarMemoria(diccionarioVariables, diccionarioEtiquetas, sizeDocumento);
         }
-        
     };
-   
 });
-
-
-
 // Mostrar el valor actual del slider cuando se mueve
 valorM.innerText = sliderM.value;
 sliderM.addEventListener("input", function() {
     valorM.innerText = sliderM.value;
     sliderK.max = sliderM.value-2;
-    valorK.innerText = sliderK.value;
-    
+    valorK.innerText = sliderK.value;    
 });
 // Mostrar el valor actual del slider cuando se mueve
 valorK.innerText = sliderK.value;
@@ -276,7 +283,6 @@ function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocument
         let j = (esVacio());
         //variable para saber la posicion a la que apunta la etiqueta al sumarla con el valor que esté en el diccionario de etiqueta
         let p = j-1 ;
-
         archivo.readAsText(document.getElementById("fileInput").files[0]);
         archivo.onload = function() {
             //separar por lineas y guardar en un array
@@ -310,12 +316,10 @@ function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocument
                 let posicion = p +valor[1]
                 document.getElementById("readEtiquetas").insertAdjacentHTML('beforeend', '<p>'+ (`${posicion}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0"))+ key + '</p>');
             });
-
         }
         //número de documentos leídos
         idDocumento++;
     }
-    
 }
 //funcion para mostrar la memoria 
 function mostrarMemoria() {
