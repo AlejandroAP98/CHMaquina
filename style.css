@@ -39,22 +39,24 @@ body {
 } 
 
 
+
 #cardScreen{
-    position: relative;
-    background-color: #000000c2;
-    top: 100px;
-    left:185px;
+    background-color: #36363684;
+    font-size: 18px;
+    top: 205px;
+    left:195px;
     width: 400px;
-    height: 165px;
+    height: 169px;
+    position: absolute;
 }
 
 #cardImpresora{
-    position: absolute;
-    background-color: #ffffff85;
+    background-color: #ffffffbd;
     top: 560px;
     left: 180px;
     width: 245px;
     height: 100px;
+    position: absolute;
 }
 
 /* ------------------------------------------- */
@@ -99,7 +101,6 @@ body {
     position: absolute;
    
 }
-
 
 #cardFile::-webkit-scrollbar {
     height: 10px;
@@ -189,4 +190,6 @@ body {
     left: 110px;
 }
  
+
+
 

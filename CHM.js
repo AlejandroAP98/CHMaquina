@@ -8,6 +8,7 @@ var sizeDocumentos=0;
 var primerDocumento = true;
 var acumulador = 0;
 var idDocumento = 0;
+var diccionarioProcesos = {};
 
 //Rango de memoria y valor actual
 const sliderM = document.getElementById("memoryRange");
@@ -109,7 +110,7 @@ document.getElementById("fileInput").addEventListener("change", function() {
                         sintaxisError = true;
                     }
                 //si se está asignando una instrucción a una variable existente y validar si tiene un operador válido	
-                } else if ((words[0] == "cargue" || words[0] == "lea" || words[0] == "sume" || words[0] == "reste" || words[0] == "multiplique" || words[0] == "divida" || words[0]==="potencia" || words[0] == "modulo" || words[0] == "concatene" || words[0] == "elimine" || words[0] == "extraiga" || words[0] == "muestre" || words[0] == "imprima" || words[0]==="almacene") && (words.length == 2) ) {
+                } else if ((words[0] == "cargue" || words[0] == "lea" || words[0] == "sume" || words[0] == "reste" || words[0] == "multiplique" || words[0] == "divida" || words[0]==="potencia" || words[0] == "modulo" || words[0] == "concatene" || words[0] == "elimine" || words[0] == "extraiga" || words[0]==="almacene") && (words.length == 2) ) {
                     if (!((quitarSlash(words[1])) in diccionarioVariables)) {
                         erroresArray.push("Error 06 - Variable no declarada - Línea " + (i + 1));
                         sintaxisError = true;
@@ -177,9 +178,16 @@ document.getElementById("fileInput").addEventListener("change", function() {
                         erroresArray.push("Error 06 - Variable no declarada - Línea " + (i + 1));
                         sintaxisError = true;
                     }
-                }else{
+                }else if(words[0]==="muestre" && (words.length==2)){
+                    if(words[1]!="acumulador\r" && !((quitarSlash(words[1])) in diccionarioVariables)){
                     erroresArray.push("Error 01 - Sintaxis - Línea " + (i + 1));
                     sintaxisError = true;
+                    }
+                }else if(words[0]==="imprima" && (words.length==2)){
+                    if(words[1]!="acumulador\r" && !((quitarSlash(words[1])) in diccionarioVariables)){
+                    erroresArray.push("Error 01 - Sintaxis - Línea " + (i + 1));
+                    sintaxisError = true;
+                    }
                 }
             }else if (!((retorne==true)  || words[0] == "\r" || words[0] == "\n" || words[0] == "\r\n" || words[0] == "\n\r" || words[0] == "" || (words[0].substring(0, 2) === "//"))) {
                 //si la palabra es un salto de linea
@@ -191,9 +199,10 @@ document.getElementById("fileInput").addEventListener("change", function() {
             }
             sizeDocumento++;
         }
+        console.log("diccionarioEtiquetas", diccionarioEtiquetas);
         //verificar que las etiquetas apunten a una instrucción existente
         Object.entries(diccionarioEtiquetas).forEach(([key, valor]) => {
-            if(valor[1]>=sizeDocumento){
+            if(valor[1]>sizeDocumento){
                 erroresArray.push("Error 05 - Posición de etiqueta ("+(key)+")");
                 sintaxisError = true;   
             }
@@ -252,6 +261,10 @@ sliderK.addEventListener("input", function() {
 });
 //asignar valores a la memoria del sistema 
 function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocumento) {
+    //variables
+    const variablesProceso = {};
+    //etiquetas
+    const etiquetasProceso = {};
     //tamaño de memoria disponible para almacenamiento
     let sizeMemmoriaDisponible=(parseInt(sliderM.value)-((parseInt(sliderK.value)))-1);
     //tamaño del archivo contando el espacio requerido para las variables
@@ -305,8 +318,17 @@ function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocument
             }
             //mostrar variables en el card           
             Object.entries(diccionarioVariables).forEach(([key, valor]) => {
-                //posicion de la variable 
+                //posicion de la variable
+                // //validar si es entero para convertir 
+                // if (Number.isInteger(valor)) {
+                //     valor = parseInt(valor);
+                // }
+                // //validar si es float para convertir
+                // if(!isNaN(Number.parseFloat(valor)) && !isNaN(valor)){
+                //     valor = parseFloat(valor);
+                // }
                 memoria[j] = valor;
+                variablesProceso[key] = j;
                 document.getElementById("readVariables").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0")) + key + '</p>');
                 j++;
             });
@@ -314,11 +336,14 @@ function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocument
             Object.entries(diccionarioetiquetas).forEach(([key, valor]) => {
                 // posicion de la etiqueta
                 let posicion = p +valor[1]
+                etiquetasProceso[key] = posicion;
                 document.getElementById("readEtiquetas").insertAdjacentHTML('beforeend', '<p>'+ (`${posicion}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0"))+ key + '</p>');
             });
         }
         //número de documentos leídos
         idDocumento++;
+        //guardar en el diccionario de procesos
+        diccionarioProcesos[idDocumento] = [variablesProceso, etiquetasProceso];    
     }
 }
 //funcion para mostrar la memoria 
@@ -344,7 +369,7 @@ function mostrarMemoria() {
 //funcion para llenar la memoria con vacios
 function llenarMemoria(){
     for (let i = 0; i < (parseInt(sliderM.value)); i++) {
-        memoria[i] = "";
+        memoria[i] ="";
     }
 }
 //funcion para saber la posicion vacia de la memoria 
@@ -372,4 +397,263 @@ function esLetra(cadena) {
   function quitarSlash(cadena){
       let cadenaSinSlash = cadena.split("\r");
       return cadenaSinSlash[0];
+}
+
+function ejecucionNormal(){
+    if (!asignado){
+        alert("NO HAY NADA QUE EJECUTAR!!!");
+    }else{
+        //desabilitar botón Normal
+        const btn=document.getElementById("btnNormal");
+        btn.setAttribute("disabled", "true");
+        //empezar despues del espacio asignado para kernel
+        let i = (sliderK.value);
+        i++;
+        let idProceso = 1;
+        //recorrer la memoria con intervalos de 250 ms
+        let intervalo = setInterval(function(){
+            //ejecutar la instruccion de la memoria
+            console.log(memoria[i]);
+            try{
+                try{
+                    let line = memoria[i].split(" ");
+                    if ((line.length >= 2)){
+                        if (line[0] == "retorne" || line[0] == "retorne\r"){
+                            idProceso++;
+                            memoria[0] = 0;
+                        }
+                        document.getElementById("instructionLine").innerHTML = (`${i}`.padStart(4, "0")+"-"+ memoria[i]);
+                        //mostrar acumulador en el card
+                        document.getElementById("acumuladorValor").innerHTML = memoria[0];
+                        idProceso,i=accion(memoria[i],idProceso,i);
+                    }else if(line[0]=="retorne" || line[0]=="retorne\r"){
+                        idProceso++;
+                        memoria[0] = 0;
+                        document.getElementById("instructionLine").innerHTML = (`${i}`.padStart(4, "0")+"-"+ memoria[i]);
+                        //mostrar acumulador en el card
+                        document.getElementById("acumuladorValor").innerHTML = memoria[0];
+                    }
+                }catch(error){
+                    idProceso,i=accion(memoria[i],idProceso,i);
+                }
+            }catch(error){
+                console.log("Error en la acción");
+            }
+            //mostrar instrucción en el card
+            i++;
+            mostrarMemoria();
+            if(i >= memoria.length || (memoria[i] == "" && memoria[i+1] == "")){
+                clearInterval(intervalo);
+                btn.removeAttribute("disabled");
+            }
+        }, 250);
+        //boton para pausar la ejecucion 
+        document.getElementById("pausa").addEventListener("click",function(){
+            console.log("pausa");
+            if(intervalo){
+                clearInterval(intervalo);
+                intervalo = null;
+            }else{
+                intervalo = setInterval(function(){
+                    //ejecutar la instruccion de la memoria
+                    console.log(memoria[i]);
+                    try{
+                        try{
+                            let line = memoria[i].split(" ");
+                            if ((line.length >= 2)){
+                                if (line[0] == "retorne" || line[0] == "retorne\r"){
+                                    idProceso++;
+                                    memoria[0] = 0;
+                                }
+                                document.getElementById("instructionLine").innerHTML = (`${i}`.padStart(4, "0")+"-"+ memoria[i]);
+                                //mostrar acumulador en el card
+                                document.getElementById("acumuladorValor").innerHTML = memoria[0];
+                                idProceso,i=accion(memoria[i],idProceso,i);
+                            }else if(line[0]=="retorne" || line[0]=="retorne\r"){
+                                idProceso++;
+                                memoria[0] = 0;
+                                document.getElementById("instructionLine").innerHTML = (`${i}`.padStart(4, "0")+"-"+ memoria[i]);
+                                //mostrar acumulador en el card
+                                document.getElementById("acumuladorValor").innerHTML = memoria[0];
+                            }
+                        }catch(error){
+                            idProceso,i=accion(memoria[i],idProceso,i);
+                        }
+                    }catch(error){
+                        console.log("Error en la acción");
+                    }
+                    //mostrar instrucción en el card
+                    i++;
+                    mostrarMemoria();
+                    if(i >= memoria.length || (memoria[i] == "" && memoria[i+1] == "")){
+                        clearInterval(intervalo);
+                        btn.removeAttribute("disabled");
+                    }
+                }, 250);
+            }
+
+        });
+    }
+
+}
+
+function accion(linea, idDocumento,i){
+    let variable = "";
+    let posicion = 0;
+    try{
+        let operacion = linea.split(" ");
+        variable = quitarSlash(operacion[1]);
+        posicion = diccionarioProcesos[idDocumento][0][variable];
+    }catch(error){
+        return idDocumento,i;
+    }
+    let operacion = linea.split(" ");
+    if (operacion[0]==="cargue"){
+        //cargue
+        memoria[0] = memoria[posicion];
+        return idDocumento,i;
+    }else if(operacion[0]==="almacene"){
+        //almacene
+        memoria[posicion] = memoria[0];
+        return idDocumento,i;
+    }else if(operacion[0]==="lea"){
+        //lea
+        memoria[posicion] = prompt("Ingrese un valor");
+        return idDocumento,i;
+    }else if(operacion[0]==="sume"){
+        //sume
+        let cadena = memoria[posicion].toString();
+        let cadena2 = memoria[0].toString();
+        if (cadena.includes(".") || cadena2.includes(".")){
+            memoria[0] = parseFloat(memoria[0]) + parseFloat(memoria[posicion]);
+        }else{
+            memoria[0] = parseInt(memoria[0]) + parseInt(memoria[posicion]);
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="reste"){
+        //reste
+        let cadena = memoria[posicion].toString();
+        let cadena2 = memoria[0].toString();
+        if (cadena.includes(".") || cadena2.includes(".")){
+            memoria[0] = parseFloat(memoria[0]) - parseFloat(memoria[posicion]);
+        }else{
+            memoria[0] = parseInt(memoria[0]) - parseInt(memoria[posicion]);
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="multiplique"){
+        //multiplique
+        let cadena = memoria[posicion].toString();
+        let cadena2 = memoria[0].toString();
+        if (cadena.includes(".") || cadena2.includes(".")){
+            memoria[0] = parseFloat(memoria[0]) * parseFloat(memoria[posicion]);
+        }else{
+            memoria[0] = parseInt(memoria[0]) * parseInt(memoria[posicion]);
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="divida"){
+        //divida
+        //validar que no se divida entre 0
+        if(memoria[posicion]!= 0){
+            let cadena = memoria[posicion].toString();
+            let cadena2 = memoria[0].toString();
+            if (cadena.includes(".") || cadena2.includes(".")){
+                memoria[0] = parseFloat(memoria[0]) / parseFloat(memoria[posicion]);
+            }else{
+                memoria[0] = parseInt(memoria[0]) / parseInt(memoria[posicion]);
+            }
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="potencia"){
+        //potencia
+        memoria[0] = Math.pow(memoria[0],memoria[posicion]);
+        return idDocumento,i;
+    }else if(operacion[0]==="modulo"){
+        //modulo
+        memoria[0] = parseInt(memoria[0]) % parseInt(memoria[posicion]);
+        return idDocumento,i;
+    }else if(operacion[0]==="concatene"){
+        //concatene
+        memoria[0] = memoria[0] + memoria[posicion];
+        return idDocumento,i;
+    }else if(operacion[0]==="elimine"){
+        //elimine
+        memoria[0] = memoria[0].replaceAll(memoria[posicion],"");
+        return idDocumento,i;
+    }else if(operacion[0] === "extraiga"){
+        //extraiga
+        let extraer = memoria[diccionarioProcesos[idDocumento][0][variable]];
+        let subcadena = memoria[0].substring(0,extraer);
+        memoria[0] = subcadena;
+        return idDocumento,i;
+    }else if (operacion[0]==="muestre"){
+        //limpiar la pantalla
+        document.getElementById("screen").innerHTML = "";
+        //muestre
+        if (operacion[1]==="acumulador\r"){
+            document.getElementById("screen").innerHTML=memoria[0];
+        }else{
+            document.getElementById("screen").insertAdjacentHTML('beforeend', memoria[posicion]);
+        }
+        return idDocumento,i;
+    }else if (operacion[0]==="imprima"){
+        //imprima
+        if(operacion[1]==="acumulador\r"){
+            document.getElementById("print").innerHTML=memoria[0];
+        }else{
+            document.getElementById("print").insertAdjacentHTML('beforeend',memoria[posicion]);
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="vaya"){
+        //vaya
+        let posicion = diccionarioProcesos[idDocumento][1][variable];
+        i=posicion;
+        return idDocumento,i;
+    }else if(operacion[0]==="vayasi"){
+        //vayasi
+        if(memoria[0] < 0){
+            let posicion = diccionarioProcesos[idDocumento][1][quitarSlash(operacion[2])];
+            console.log(posicion);
+            i=posicion-1;
+            return idDocumento,i;
+        }else if(memoria[0] > 0){
+            let posicion = diccionarioProcesos[idDocumento][1][operacion[1]];
+            i=posicion-1;
+            return idDocumento,i;
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="Y"){
+        //Y
+        let variable1 = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[1])];
+        let variable2 = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[2])];
+        let result = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[3])];
+        if(memoria[variable1] && memoria[variable2]){
+            memoria[result] = 1;
+        }else{
+            memoria[result] = 0;
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="O"){
+        //O
+        let variable1 = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[1])];
+        let variable2 = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[2])];
+        let result = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[3])];
+        if(memoria[variable1] || memoria[variable2]){
+            memoria[result] = 1;
+        }else{
+            memoria[result] = 0;
+        }
+        return idDocumento,i;
+    }else if(operacion[0]==="NO"){
+        //NO
+        let variable1 = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[1])];
+        let result = diccionarioProcesos[idDocumento][0][quitarSlash(operacion[2])];
+        if(memoria[variable1]){
+            memoria[result] = 0;
+        }else{
+            memoria[result] = 1;
+        }
+        return idDocumento,i;
+    }else{
+        return idDocumento,i;
+    }
 }

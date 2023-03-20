@@ -16,7 +16,7 @@
       <a href="#" class="brand-logo center">CHMáquina</a>
     </div>
     <div class="nav-content">
-      <ul class="tabs tabs-transparent">
+      <ul class="tabs tabs-transparent">  
         <li class="tab">
           <div class="file-field input-field">
             <a class="btn black">
@@ -27,11 +27,10 @@
           </div>
         </li>
         <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">directions_walk</i>Paso a paso</a></li>
-        <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">play_arrow</i>Normal</a></li>
+        <li class="tab" ><a class="waves-effect waves-light black btn" onclick="ejecucionNormal()" id="btnNormal"><i class="material-icons left">play_arrow</i>Normal</a></li>
         <li class="tab"><a class="waves-effect waves-light black btn" onclick="mostrarMemoria()"><i class="material-icons left">list</i>Muestra de memoria</a></li>
-        <li class="tab"><a class="waves-effect waves-light black btn"><i class="material-icons left">pause</i>Pausa</a></li>
-        <!-- <li class="tab"><a class="waves-effect waves-light black btn" onclick="salir()"><i class="material-icons left">exit_to_app</i>Salir</a></li> -->
-      </ul>
+        <li class="tab"><a class="waves-effect waves-light black btn" id="pausa"><i class="material-icons left">pause</i>Pausa</a></li>
+        </ul>
     </div>
   </nav>
   <div class="imagenes">
@@ -40,7 +39,7 @@
     <img src="impresora.png" alt="CHM-CPU" id="impresoraImagen">
   </div>
   <div class="row">
-    <div class="col s5">
+    <div class="col s1">
       <h6 id="textProgramMode">Modo <span id="programMode"></span></h6>
       <div class="col s3.8 white-text">
         <form action="#">
@@ -56,17 +55,17 @@
           </p>
         </form>
         <h6 id="text">Acumulador: <span id="acumuladorValor"></span></h6>
-        <h6 id="text">Instrucción <span id="instructionLine"></span></h6>
+        <h6 id="text">Instrucción: <span id="instructionLine"></span></h6>
       </div>
       <a class="waves-effect waves-light black btn" id="btnPrint"><i class="material-icons center">print</i></a>
-      <div class="card" id="cardScreen">
+      <div class="card left" id="cardScreen">
         <div class="card-content">
           <p id="screen" class="white-text"></p>
         </div>
       </div>
       <div class="card" id="cardImpresora">
         <div class="card-content">
-          <p id="screen" class="white-text"></p>
+          <p id="print" class="black-text"></p>
         </div>
       </div>
     </div>
