@@ -38,18 +38,6 @@ body {
     padding: 5px;
 } 
 
-
-
-#cardScreen{
-    background-color: #36363684;
-    font-size: 18px;
-    top: 205px;
-    left:195px;
-    width: 400px;
-    height: 169px;
-    position: absolute;
-}
-
 #cardImpresora{
     background-color: #ffffffbd;
     top: 560px;
@@ -171,17 +159,56 @@ body {
     border-radius: 10px;
 }
 
+#cardScreen{
+    background-color: #36363684;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 18px;
+    top: 205px;
+    left:195px;
+    width: 400px;
+    height: 169px;
+    position: absolute;
+}
+
+#cardScreen::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+#cardScreen::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 5px;
+}
+
+#cardScreen::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
 /* ------------------------------------------- */
 
 #textProgramMode{
-    position: absolute;
     background-color: rgb(0, 0, 0);
     color: #ffffff;
     width: 190px;
     left: 300px;
     padding: 10px;
     font-size: 18px;
+    position: absolute;
     
+}
+
+#nameProgram{
+    background-color: rgb(0, 0, 0);
+    color: #ffffff;
+    width: 190px;
+    left: 300px;
+    top: 150px;
+    padding: 10px;
+    font-size: 18px;
+    position: absolute;
+
 }
 
 #btnPrint{
@@ -191,5 +218,43 @@ body {
 }
  
 
+#navText {
+    color: #FFFFFF;
+    text-shadow: 2px 1px 0 #7A7A7A;
+    color: #FFFFFF;
+    font-size: 40px;
+    }
 
 
+#cardEditor{
+    background-color: #000000;
+    font-size: 14px;
+    top: 620px;
+    left: 280px;
+    height: auto;
+    outline: solid 2px #4a4a4a;
+    outline-offset: 2px;
+}
+
+#editorFile{
+    height: 300px;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 16px;
+    resize: none;
+}
+
+#editorFile::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+#editorFile::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 5px;
+}
+
+#editorFile::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
