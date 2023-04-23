@@ -626,11 +626,11 @@ function accion(linea, idDocumento,i){
         if(operacion[1]==="acumulador\r"){
             document.getElementById("print").insertAdjacentHTML("beforeend",memoria[0]);
             //salto de liena
-            document.getElementById("screen").innerHTML += "<br>";
+            document.getElementById("print").innerHTML += "<br>";
         }else{
             document.getElementById("print").insertAdjacentHTML('beforeend', memoria[posicion]);
             //salto de liena
-            document.getElementById("screen").innerHTML += "<br>";
+            document.getElementById("print").innerHTML += "<br>";
         }
         return i;
     }else if(operacion[0]==="vaya"){

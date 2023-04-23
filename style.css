@@ -38,14 +38,6 @@ body {
     padding: 5px;
 } 
 
-#cardImpresora{
-    background-color: #ffffffbd;
-    top: 560px;
-    left: 180px;
-    width: 245px;
-    height: 100px;
-    position: absolute;
-}
 
 /* ------------------------------------------- */
 
@@ -182,6 +174,33 @@ body {
 }
 
 #cardScreen::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+#cardImpresora{
+    background-color: #ffffffbd;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 18px;
+    top: 560px;
+    left: 180px;
+    width: 245px;
+    height: 100px;
+    position: absolute;
+}
+
+#cardImpresora::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+#cardImpresora::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 5px;
+}
+
+#cardImpresora::-webkit-scrollbar-track {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
 }
