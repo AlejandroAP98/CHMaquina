@@ -16,6 +16,10 @@ var intervaloID = 0;
 var modoPasoAPaso = false;
 var documento=[];
 var URLactual=[];
+var proceso=[];
+var contador=0;
+var pasoapaso=false;
+var indicador=1;
 
 //Rango de memoria y valor actual
 const sliderM = document.getElementById("memoryRange");
@@ -32,16 +36,19 @@ const botonPausar=document.getElementById("btnPausar");
 const botonCargar=document.getElementById("btnCargar");
 //
 botonEjecutarAuto.addEventListener("click", function(){
-    modoPasoAPaso = false;
-    detenerIntervalo();
-    iniciarIntervalo();
+    if(asignado){
+        botonEjecutarAuto.setAttribute("disabled", "true"); 
+        iniciar();
+    }
+    
 });
 botonEjecutarPasoAPaso.addEventListener("click", function(){
-    modoPasoAPaso = true;
-    detenerIntervalo();
-    iniciarIntervalo();
+    ventanaContinuar();
 });
-botonPausar.addEventListener("click", detenerIntervalo);
+botonPausar.addEventListener("click", function(){
+    //activar boton ejecutar
+    ventanaPausar();
+});
 
 // Mostrar el valor actual del slider cuando se mueve
 valorM.innerText = sliderM.value;
@@ -58,7 +65,9 @@ sliderK.addEventListener("input", function() {
 
 //evento de cargar archivo
 const cargar=document.getElementById("fileInput");
-///funciones--------------------------------------------------------------
+
+///---------------------------------------------------------------Funciones--------------------------------------------------------------
+
 cargar.addEventListener("change", function(){
     // leer el archivo
     const archivo = new FileReader();
@@ -195,7 +204,8 @@ function leerArchivo(archivo){
                                 sintaxisError = true;
                             }else{
                                 //asignando dos valores a cada clave, la linea del documento y el valor de la clave
-                                diccionarioEtiquetas[words[1]] =[ (sizeDocumento+1), apuntador] ;
+                                //diccionarioEtiquetas[words[1]] =[ (sizeDocumento+1), apuntador] ;
+                                diccionarioEtiquetas[words[1]] = [(sizeDocumento+1), apuntador];
                                 apuntadorEtiqueta.push(apuntador);
                                 lineaEtiqueta.push(sizeDocumento+1);
                             }
@@ -287,90 +297,194 @@ function leerArchivo(archivo){
                 ventanaErrores.document.write('<p>' + erroresArray[i] + "<br>" + '</p>');
             }
         } else {
-            asignarMemoria(diccionarioVariables, diccionarioEtiquetas, sizeDocumento);
-            
-        }
+            //si no hay errores, se ejecuta el programa
+            const variablesProceso = {};
+            //etiquetas
+            const etiquetasProceso = {};
+            //tamaño de memoria disponible para almacenamiento
+            let sizeMemmoriaDisponible=(parseInt(sliderM.value)-((parseInt(sliderK.value)))-1);
+            //tamaño del archivo contando el espacio requerido para las variables
+            let sizeArchivoYVariables = (sizeDocumento + Object.keys(diccionarioVariables).length);
+            sizeDocumentos += sizeArchivoYVariables;
+            //tamaño de memoria vs instrucciones
+            if (sizeDocumentos > sizeMemmoriaDisponible) {
+                alert("EL DOCUMENTO ES MUY GRANDE PARA LA MEMORIA!!!");
+                //quitar los valores del archivo a la variable de tamaño general 
+                sizeDocumentos-=sizeArchivoYVariables;
+            }else{
+                //desabilitar sliders de rangos
+                // sliderM.disabled = true;
+                // sliderK.disabled = true;
+                // //asignar valores al kernel
+                // asignado = true;
+                // if(primerDocumento==true){
+                //     llenarMemoria();
+                //     memoria[0] = acumulador;
+                //     for (let i = 1; i <= parseInt(sliderK.value); i++) {
+                //         memoria[i] = "--CHSOS V2023--";
+                //     }
+                //     primerDocumento=false;
+                // }
+                //leer archivo
+                const archivo = new FileReader();
+                documento.push(document.getElementById("fileInput").files[0].name);
+                //saber la posicion vacia en memoria
+                let j=0;
+                if(primerDocumento==true){
+                    console.log("primer documento");
+                    contador = (parseInt(sliderK.value)+1);
+                }
+                j=contador;
+                //variable para saber la posicion a la que apunta la etiqueta al sumarla con el valor que esté en el diccionario de etiqueta
+                let p = contador-1;
+                archivo.readAsText(document.getElementById("fileInput").files[0]);
+                archivo.onload = function() {
+                    //separar por lineas y guardar en un array
+                    const lines = archivo.result.split('\n');
+                    for ( i = 0 ; i < lines.length; i++) {
+                        const line = lines[i];
+                        const words = line.split(" ");
+                        //mostrar archivo
+                        if (!(words[0] == "\r" || words[0] == "\n" || words[0] == "\r\n" || words[0] == "\n\r" || words[0] == "" || (words[0].substring(0, 2) === "//"))) {
+                            proceso.push(line.toString());
+                            memoria[j] = line;
+                            //si la palabra es un salto de linea o comentario
+                            document.getElementById("readFile").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+ line + '</p>'); 
+                            j++;
+                        }
+                    }
+                    //mostrar variables en el card           
+                    Object.entries(diccionarioVariables).forEach(([key, valor]) => {
+                        memoria[j] = valor;
+                        proceso.push((valor.toString()));
+                        variablesProceso[key] = j;
+                        document.getElementById("readVariables").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0")) + key + '</p>');
+                        j++;
+                    });
+                    //mostrar etiquetas en el card
+                    Object.entries(diccionarioEtiquetas).forEach(([key, valor]) => {
+                        // posicion de la etiqueta
+                        let posicion = p +valor[1]
+                        etiquetasProceso[key] = posicion;
+                        document.getElementById("readEtiquetas").insertAdjacentHTML('beforeend', '<p>'+ (`${posicion}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0"))+ key + '</p>');
+                    });
+                }
+                //número de documentos leídos
+                idDocumento++;
+                //guardar en el diccionario de procesos
+                diccionarioProcesos[idDocumento] = [variablesProceso, etiquetasProceso];
+                console.log(diccionarioProcesos);
+                index=parseInt(sliderK.value)+1;
+                sliderM.disabled = true;
+                sliderK.disabled = true;
+                //asignar valores al kernel
+                asignado = true;
+                if(primerDocumento==true){
+                    llenarMemoria();
+                    memoria[0] = acumulador;
+                    let j = 0;
+                    for (let i = 1; i < memoria.length; i++) {
+                        if (i<=parseInt(sliderK.value)){
+                            memoria[i] = "--CHSOS V2023--";
+                        }else{
+                            if (j<proceso.length){
+                                console.log(proceso[j]);
+                                memoria[i] = proceso[j];
+                                j++;
+                            }
+                        }
+                    }
+                    indicador=parseInt(sliderK.value)+1;
+                    primerDocumento=false;
+                }
+                
+            }
+            contador+=sizeDocumentos;
+            sizeDocumento=0;
+            sizeDocumentos=0;
+        }    
     };
+    
 }
 //asignar valores a la memoria del sistema 
-function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocumento) {
-    //variables
-    const variablesProceso = {};
-    //etiquetas
-    const etiquetasProceso = {};
-    //tamaño de memoria disponible para almacenamiento
-    let sizeMemmoriaDisponible=(parseInt(sliderM.value)-((parseInt(sliderK.value)))-1);
-    //tamaño del archivo contando el espacio requerido para las variables
-    let sizeArchivoYVariables = (sizeDocumento + Object.keys(diccionarioVariables).length);
-    sizeDocumentos += sizeArchivoYVariables;
-    //tamaño de memoria vs instrucciones
-    if (sizeDocumentos > sizeMemmoriaDisponible) {
-        alert("EL DOCUMENTO ES MUY GRANDE PARA LA MEMORIA!!!");
-        //quitar los valores del archivo a la variable de tamaño general 
-        sizeDocumentos-=sizeArchivoYVariables;
-    }else{
-        //desabilitar sliders de rangos
-        sliderM.disabled = true;
-        sliderK.disabled = true;
-        //asignar valores al kernel
-        asignado = true;
-        if(primerDocumento==true){
-            llenarMemoria();
-            memoria[0] = acumulador;
-            for (let i = 1; i <= parseInt(sliderK.value); i++) {
-                memoria[i] = "--CHSOS V2023--";
-            }
-            primerDocumento=false;
-        }
-        //leer archivo
-        const archivo = new FileReader();
-        documento.push(document.getElementById("fileInput").files[0].name);
-        //saber la posicion vacia en memoria
-        let j = (esVacio());
-        //variable para saber la posicion a la que apunta la etiqueta al sumarla con el valor que esté en el diccionario de etiqueta
-        let p = j-1 ;
-        archivo.readAsText(document.getElementById("fileInput").files[0]);
-        archivo.onload = function() {
-            //separar por lineas y guardar en un array
-            const lines = archivo.result.split('\n');
-            for ( i = 0 ; i < lines.length; i++) {
-                const line = lines[i];
-                const words = line.split(" ");
-                //mostrar archivo
-                if (words[0] =="retorne"){
-                    memoria[j] = line;
-                    document.getElementById("readFile").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+ line + '</p>');
-                    j++;
-                    break; 
-                }else if (!(words[0] == "\r" || words[0] == "\n" || words[0] == "\r\n" || words[0] == "\n\r" || words[0] == "" || (words[0].substring(0, 2) === "//"))) {
-                    memoria[j] = line;
-                    //si la palabra es un salto de linea o comentario
-                    document.getElementById("readFile").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+ line + '</p>');
-                    j++;
-                }
-            }
-            //mostrar variables en el card           
-            Object.entries(diccionarioVariables).forEach(([key, valor]) => {
-                memoria[j] = valor;
-                variablesProceso[key] = j;
-                document.getElementById("readVariables").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0")) + key + '</p>');
-                j++;
-            });
-            //mostrar etiquetas en el card
-            Object.entries(diccionarioetiquetas).forEach(([key, valor]) => {
-                // posicion de la etiqueta
-                let posicion = p +valor[1]
-                etiquetasProceso[key] = posicion;
-                document.getElementById("readEtiquetas").insertAdjacentHTML('beforeend', '<p>'+ (`${posicion}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0"))+ key + '</p>');
-            });
-        }
-        //número de documentos leídos
-        idDocumento++;
-        //guardar en el diccionario de procesos
-        diccionarioProcesos[idDocumento] = [variablesProceso, etiquetasProceso];
-        index=parseInt(sliderK.value)+1;    
-    }
-}
+//function asignarMemoria(diccionarioVariables, diccionarioetiquetas, sizeDocumento) {
+    // //variables
+    // const variablesProceso = {};
+    // //etiquetas
+    // const etiquetasProceso = {};
+    // //tamaño de memoria disponible para almacenamiento
+    // let sizeMemmoriaDisponible=(parseInt(sliderM.value)-((parseInt(sliderK.value)))-1);
+    // //tamaño del archivo contando el espacio requerido para las variables
+    // let sizeArchivoYVariables = (sizeDocumento + Object.keys(diccionarioVariables).length);
+    // sizeDocumentos += sizeArchivoYVariables;
+    // //tamaño de memoria vs instrucciones
+    // if (sizeDocumentos > sizeMemmoriaDisponible) {
+    //     alert("EL DOCUMENTO ES MUY GRANDE PARA LA MEMORIA!!!");
+    //     //quitar los valores del archivo a la variable de tamaño general 
+    //     sizeDocumentos-=sizeArchivoYVariables;
+    // }else{
+    //     //desabilitar sliders de rangos
+    //     sliderM.disabled = true;
+    //     sliderK.disabled = true;
+    //     //asignar valores al kernel
+    //     asignado = true;
+    //     if(primerDocumento==true){
+    //         llenarMemoria();
+    //         memoria[0] = acumulador;
+    //         for (let i = 1; i <= parseInt(sliderK.value); i++) {
+    //             memoria[i] = "--CHSOS V2023--";
+    //         }
+    //         primerDocumento=false;
+    //     }
+    //     //leer archivo
+    //     const archivo = new FileReader();
+    //     //documento.push(document.getElementById("fileInput").files[0].name);
+    //     //saber la posicion vacia en memoria
+    //     let j = (esVacio());
+    //     //variable para saber la posicion a la que apunta la etiqueta al sumarla con el valor que esté en el diccionario de etiqueta
+    //     let p = j-1 ;
+    //     archivo.readAsText(document.getElementById("fileInput").files[0]);
+    //     archivo.onload = function() {
+    //         //separar por lineas y guardar en un array
+    //         const lines = archivo.result.split('\n');
+    //         for ( i = 0 ; i < lines.length; i++) {
+    //             const line = lines[i];
+    //             const words = line.split(" ");
+    //             //mostrar archivo
+    //             if (words[0] =="retorne"){
+    //                 memoria[j] = line;
+    //                 document.getElementById("readFile").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+ line + '</p>');
+    //                 j++;
+    //                 break; 
+    //             }else if (!(words[0] == "\r" || words[0] == "\n" || words[0] == "\r\n" || words[0] == "\n\r" || words[0] == "" || (words[0].substring(0, 2) === "//"))) {
+    //                 memoria[j] = line;
+    //                 //si la palabra es un salto de linea o comentario
+    //                 document.getElementById("readFile").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+ line + '</p>');
+    //                 j++;
+    //             }
+    //         }
+    //         //mostrar variables en el card           
+    //         Object.entries(diccionarioVariables).forEach(([key, valor]) => {
+    //             memoria[j] = valor;
+    //             variablesProceso[key] = j;
+    //             document.getElementById("readVariables").insertAdjacentHTML('beforeend', '<p>'+ (`${j}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0")) + key + '</p>');
+    //             j++;
+    //         });
+    //         //mostrar etiquetas en el card
+    //         Object.entries(diccionarioetiquetas).forEach(([key, valor]) => {
+    //             // posicion de la etiqueta
+    //             let posicion = p +valor[1]
+    //             etiquetasProceso[key] = posicion;
+    //             document.getElementById("readEtiquetas").insertAdjacentHTML('beforeend', '<p>'+ (`${posicion}`.padStart(4, "0"))+" "+(`${idDocumento}`.padStart(4, "0"))+ key + '</p>');
+    //         });
+    //     }
+    //     //número de documentos leídos
+    //     idDocumento++;
+    //     //guardar en el diccionario de procesos
+    //     diccionarioProcesos[idDocumento] = [variablesProceso, etiquetasProceso];
+    //     index=parseInt(sliderK.value)+1;    
+//     }
+// }
 //funcion para mostrar la memoria 
 function mostrarMemoria() {
     //limpiar memoria
@@ -422,60 +536,6 @@ function esLetra(cadena) {
 function quitarSlash(cadena){
     let cadenaSinSlash = cadena.split("\r");
     return cadenaSinSlash[0];
-}
-//funcion para ejecutar el programa con intervalos de tiempo o por pasos
-function iniciarIntervalo() { 
-    if (asignado){
-        //cambiar modo del pograma
-        document.getElementById("programMode").innerHTML = "Usuario";
-        //deshabilitar botón Cargar
-        botonCargar.setAttribute("disabled", "true");
-        idProceso = 1;
-        if(modoPasoAPaso && !(index >= memoria.length || (memoria[index] === "" ))){
-            //desabilitar botón Paso a Paso
-            botonEjecutarPasoAPaso.setAttribute("disabled", "true");
-            //ciclo para recorrer la memoria
-            index=ejecutar(index);
-            // mostrar instrucción en el card
-            index++;
-            mostrarMemoria();
-            setTimeout(function(){ 
-                mostrarVentanaEmergente();
-            }, 500);
-        }else{
-            //desabilitar botón Normal
-            botonEjecutarAuto.setAttribute("disabled", "true");
-            //empezar despues del espacio asignado para kernel
-            intervaloID=setInterval(function(){
-                index=ejecutar(index);
-                // mostrar instrucción en el card
-                index++;
-                mostrarMemoria();
-                if(index >= memoria.length || (memoria[index] ==="")){
-                    detenerIntervalo();
-                    botonCargar.removeAttribute("disabled");
-                }
-            },250);
-        }
-    }
-}
-//funcion para mostrar ventana emergente
-function mostrarVentanaEmergente(){
-    if (confirm("¿Desea continuar en modo paso a paso?")) {
-        modoPasoAPaso = true; // activar el modo paso a paso
-        botonEjecutarPasoAPaso.removeAttribute("disabled");
-        iniciarIntervalo();
-    } else {
-        modoPasoAPaso = false; // desactivar el modo paso a paso
-        botonEjecutarPasoAPaso.removeAttribute("disabled");
-        iniciarIntervalo();//
-    }
-}
-//funcion para detener el intervalo de tiempo 
-function detenerIntervalo() {
-    clearInterval(intervaloID);
-    botonEjecutarAuto.removeAttribute("disabled");
-    botonEjecutarPasoAPaso.removeAttribute("disabled");
 }
 //funcion para ejecutar las instrucciones de la memoria
 function ejecutar(i){
@@ -721,5 +781,41 @@ function guardarFile() {
     // Liberar el objeto URL
     URL.revokeObjectURL(url);
 }
+// ventana para confirmar si se desea continurar en modo paso a paso
+function ventanaContinuar(){
+    if(confirm("¿Desea seguir en modo paso a paso?")){
+        pasoapaso=true;
+    }else{
+        pasoapaso=false;
+    }
+}
+// ventana para informar que se pausó la ejecución
+function ventanaPausar(){
+    alert("Se ha pausado la ejecución");
+}
 
-  
+// función para inicializar la ejecución de los procesos
+async function iniciar() {   
+    //cambiar modo del pograma
+    document.getElementById("programMode").innerHTML = "Usuario";
+    for (let i = 0; i < (memoria.length); i++) {
+        if (indicador<=contador && indicador<memoria.length){
+            //ejecutar proceso
+            console.log(indicador,memoria[indicador]);
+            indicador=ejecutar(indicador);
+            mostrarMemoria();
+            indicador++;  
+        }else{
+            //habilitar boton ejecutar
+            botonEjecutarAuto.removeAttribute("disabled");
+            i=memoria.length; 
+        }
+        if (pasoapaso==true){
+            ventanaContinuar();
+        }
+        await new Promise(resolve => setTimeout(resolve, 700));
+    }
+}
+
+
+

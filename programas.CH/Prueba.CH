@@ -1,5 +1,5 @@
 nueva unidad I 1
-nueva n I 9
+nueva n I 0
 // creo variable P de tipo lógico valor inicial 1 (verdadero)
 nueva P L 1
 // creo variable Q de tipo lógico valor inicial 1 (verdadero)

@@ -13,7 +13,7 @@
 <body>
   <nav class="nav-extended black">
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo center" id="navText">CHMáquina</a>
+      <a href="#" class="brand-logo center" id="navText">CHMÁQUINA</a>
     </div>
     <div class="nav-content">
       <ul class="tabs tabs-transparent">  
@@ -26,17 +26,17 @@
             </a>
           </div>
         </li>
+        <li class="tab" ><a class="waves-effect waves-light black btn" id="btnAuto"><i class="material-icons left">play_arrow</i>Ejecutar</a></li>
         <li class="tab"><a class="waves-effect waves-light black btn" id="btnPasoAPaso"><i class="material-icons left">directions_walk</i>Paso a paso</a></li>
-        <li class="tab" ><a class="waves-effect waves-light black btn" id="btnAuto"><i class="material-icons left">play_arrow</i>Normal</a></li>
-        <li class="tab"><a class="waves-effect waves-light black btn" onclick="mostrarMemoria()"><i class="material-icons left">list</i>Muestra de memoria</a></li>
         <li class="tab"><a class="waves-effect waves-light black btn" id="btnPausar"><i class="material-icons left">pause</i>Pausa</a></li>
+        <li class="tab"><a class="waves-effect waves-light black btn" onclick="mostrarMemoria()"><i class="material-icons left">list</i>Muestra de memoria</a></li>
       </ul>
     </div>
   </nav>
   <div class="imagenes">
-    <img src="cpu.png" alt="CHM-CPU" id="cpuImagen">
-    <img src="monitor.png" alt="CHM-CPU" id="monitorImagen">
-    <img src="impresora.png" alt="CHM-CPU" id="impresoraImagen">
+    <img src="imagenes/cpu.png" alt="CHM-CPU" id="cpuImagen">
+    <img src="imagenes/monitor.png" alt="CHM-CPU" id="monitorImagen">
+    <img src="imagenes/impresora.png" alt="CHM-CPU" id="impresoraImagen">
   </div>
   <div class="row">
     <div class="col s1">
@@ -46,7 +46,7 @@
         <form action="#">
           <p class="range-field">
             <h6 id="text">Memoria : <span id="memoryValor"></span></h6>
-            <input type="range" id="memoryRange" min="3" max="1100" value="60" />
+            <input type="range" id="memoryRange" min="3" max="1100" value="600" />
           </p>
         </form>
         <form action="#">
