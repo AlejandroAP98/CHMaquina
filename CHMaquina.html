@@ -38,11 +38,32 @@
     <img src="imagenes/monitor.png" alt="CHM-CPU" id="monitorImagen">
     <img src="imagenes/impresora.png" alt="CHM-CPU" id="impresoraImagen">
   </div>
-  <div class="row">
+  <div class="row"> 
+    <div class="col s12 " id="proceso">
+      <div class="col s4"></div>
+      <div class="input-field grey lighten-2 col 4" >
+        <select id="procesoElegido">
+          <option value="1">FCFS</option>
+          <option value="2" selected>Round Robin</option>
+          <option value="3">SJF(NE)</option>
+          <option value="4">SJF(E)</option>
+          <option value="5">Prioridad(NE)</option>
+          <option value="6">Prioridad(E)</option>
+        </select>
+      </div>
+      <div class="col s1"></div>
+      <div class="col s3">
+        <form action="#">
+          <p class="range-field">
+            <h6 id="text">Quantum : <span id="quantumValor"></span></h6>
+            <input type="range" id="quantumRange" min="1" max="15" value="5" />
+          </p>
+      </div>
+    </div>
     <div class="col s1">
       <h6 id="textProgramMode" class="center">Modo <span id="programMode"></span></h6>
       <h6 id="nameProgram" class="center"><span id="programName"></span></h6>
-      <div class="col s3.8 white-text">
+      <div class="col s3.8 white-text" id="rango">
         <form action="#">
           <p class="range-field">
             <h6 id="text">Memoria : <span id="memoryValor"></span></h6>

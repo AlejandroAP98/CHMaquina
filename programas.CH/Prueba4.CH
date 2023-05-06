@@ -12,6 +12,7 @@ multiplique a12
 multiplique a13
 multiplique a14
 almacene Resultado
+almacene Resultado
 muestre Resultado
 imprima Resultado
 retorne

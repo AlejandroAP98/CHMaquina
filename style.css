@@ -10,7 +10,7 @@ body {
 #cpuImagen{
     position: absolute;
     width: 410px;
-    top: 0px;
+    top: 50px;
     left: -100px;
 
 }
@@ -18,12 +18,13 @@ body {
 #monitorImagen{
     position:absolute;
     width: 450px;
-    left: 170px;  
+    left: 170px;
+    top: 55px;  
 }
 
 #impresoraImagen{
     width: 450px;
-    top: 340px;
+    top: 390px;
     left: 80px;
     position: absolute;  
 }
@@ -38,6 +39,17 @@ body {
     padding: 5px;
 } 
 
+#rango{
+    
+    background-color: #1b1a1aa3;
+    font-size: 18px;
+    left: 10px;
+    top: 85px;
+    padding: 5px;
+    width: 160px;
+    position: relative;
+}
+
 
 /* ------------------------------------------- */
 
@@ -50,6 +62,7 @@ body {
     left: 1070px;
     height: 600px;
     font-size: 14px;
+    top: 200px;
     position: absolute;
     
 }
@@ -78,6 +91,7 @@ body {
     height: 600px;
     left: 615px;
     font-size: 14px;
+    top: 200px;
     position: absolute;
    
 }
@@ -105,6 +119,7 @@ body {
     width: 220px;
     height: 300px;
     left: 840px;
+    top: 200px;
     font-size: 14px;
     position: absolute;
 }
@@ -131,7 +146,7 @@ body {
     width: 220px;
     left: 840px;
     height: 292px;
-    top: 420px;
+    top: 508px;
     font-size: 14px;
     position: absolute;
 }
@@ -156,7 +171,7 @@ body {
     overflow-x: auto;
     white-space: nowrap;
     font-size: 18px;
-    top: 205px;
+    top: 260px;
     left:195px;
     width: 400px;
     height: 169px;
@@ -183,7 +198,7 @@ body {
     overflow-x: auto;
     white-space: nowrap;
     font-size: 18px;
-    top: 560px;
+    top: 610px;
     left: 180px;
     width: 245px;
     height: 100px;
@@ -210,10 +225,11 @@ body {
 #textProgramMode{
     background-color: rgb(0, 0, 0);
     color: #ffffff;
-    width: 190px;
+    width: 180px;
     left: 300px;
     padding: 10px;
-    font-size: 18px;
+    font-size: 16px;
+    top: 210px;
     position: absolute;
     
 }
@@ -221,24 +237,24 @@ body {
 #nameProgram{
     background-color: rgb(0, 0, 0);
     color: #ffffff;
-    width: 190px;
+    width: 180px;
+    height: 30px;
     left: 300px;
-    top: 150px;
+    top: 180px;
     padding: 10px;
-    font-size: 18px;
+    font-size: 16px;
     position: absolute;
 
 }
 
 #btnPrint{
     position: absolute;
-    top: 540px;
+    top: 590px;
     left: 110px;
 }
  
 
 #navText {
-    color: #FFFFFF;
     text-shadow: 2px 1px 0 #7A7A7A;
     color: #FFFFFF;
     font-size: 40px;
@@ -248,7 +264,7 @@ body {
 #cardEditor{
     background-color: #000000;
     font-size: 14px;
-    top: 620px;
+    top: 720px;
     left: 280px;
     height: auto;
     outline: solid 2px #4a4a4a;
@@ -276,4 +292,10 @@ body {
 #editorFile::-webkit-scrollbar-track {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
+}
+
+#proceso{
+    font-size: 14px;
+    height: 70px;
+    position: absolute;
 }

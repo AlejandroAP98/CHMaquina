@@ -1,18 +1,18 @@
 // Calcula el producto de dos valores entrados por teclado.
-nueva unidad I 1
-nueva m I 0
-nueva n I 0
-lea m
-lea n
+nueva unidad3 I 1
+nueva m3 I 0
+nueva n3 I 0
+lea m3
+lea n3
 nueva respuesta I 0
 nueva resultado C Resultado=
 nueva intermedia I 0
-cargue n
+cargue n3
 // inicia ciclo
-reste unidad
+reste unidad3
 almacene intermedia
 cargue respuesta
-sume m
+sume m3
 almacene respuesta
 cargue intermedia
 vayasi ciclo fin
