@@ -95,19 +95,19 @@
       <div class="col s2">
         <div class="card" id="cardFile">
           <div class="card-content white-text ">
-            CÓDIGO<p id="readFile" class="white-text"></p>
+            CÓDIGO<hr><p id="readFile" class="white-text"></p>
           </div>
         </div>
       </div>
       <div class="col s2">
         <div class="card" id="cardVariables">
           <div class="card-content white-text">
-            VARIABLES<br><p id="readVariables" class="white-text"></p>
+            VARIABLES<br><hr><p id="readVariables" class="white-text"></p>
           </div>
         </div>
         <div class="card" id="cardEtiquetas">
           <div class="card-content white-text ">
-            ETIQUETAS<br><p id="readEtiquetas" class="white-text"></p>
+            ETIQUETAS<br><hr><p id="readEtiquetas" class="white-text"></p>
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
     <div class="col s2" >
       <div class="card" id="cardMuestraMemoria">
         <div class="card-content white-text">
-          MEMORIA<br><p id="readMuestraMemoria" class="white-text"></p>
+          MEMORIA<br><hr><p id="readMuestraMemoria" class="white-text"></p>
         </div>
       </div>
     </div>
@@ -130,6 +130,16 @@
         <div class="card-action">
           <a class="waves-effect waves-light black btn" id="btnCargar"><input type="file" id="fileEditor"></a>
           <a class="waves-effect waves-light black btn" id="btnGuardar" onclick="guardarFile()"><i class="material-icons left">save</i>Guardar</a>   
+        </div>
+      </div>
+    </div>
+    <div class="col s4">
+    <div class="card" id="cardProcesos">
+      <div class="card-content white-text center">
+        <span class="card-title" >Procesos en espera</span>
+        <hr>
+        <p id="procesosEspera" class="white-text"></p>
+      </div>
     </div>
   </div>
   <script src="CHM.js"></script>

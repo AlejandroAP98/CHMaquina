@@ -20,6 +20,11 @@ var contador=0;
 var pasoapaso=false;
 var indicador=1;
 var contadorProcesos=0;
+var log = [];
+var terminoProceso = true;
+var secuencia = 0;
+var tiempoRestante=0;
+var quantum=1;
 
 //Rango de memoria y valor actual
 const sliderM = document.getElementById("memoryRange");
@@ -34,7 +39,7 @@ const botonEjecutarAuto=document.getElementById("btnAuto");
 const botonEjecutarPasoAPaso=document.getElementById("btnPasoAPaso");
 const botonPausar=document.getElementById("btnPausar");
 const botonCargar=document.getElementById("btnCargar");
-//
+// asignación de botones y funcion para ejecutar el programa en los dos modos diferentes
 botonEjecutarAuto.addEventListener("click", function(){
     if(asignado){
         botonEjecutarAuto.setAttribute("disabled", "true"); 
@@ -49,7 +54,6 @@ botonPausar.addEventListener("click", function(){
     //activar boton ejecutar
     ventanaPausar();
 });
-
 // Mostrar el valor actual del slider cuando se mueve
 valorM.innerText = sliderM.value;
 sliderM.addEventListener("input", function() {
@@ -69,12 +73,9 @@ valorQ.innerText = sliderQ.value;
 sliderQ.addEventListener("input", function() {
     valorQ.innerText = sliderQ.value;
 });
-
 //evento de cargar archivo
 const cargar=document.getElementById("fileInput");
-
 ///---------------------------------------------------------------Funciones--------------------------------------------------------------
-
 cargar.addEventListener("change", function(){
     // leer el archivo
     const archivo = new FileReader();
@@ -783,50 +784,19 @@ function ventanaContinuar(){
 function ventanaPausar(){
     alert("Se ha pausado la ejecución");
 }
-// función para inicializar la ejecución de los procesos 
-async function iniciar() {   
-    document.getElementById("programMode").innerHTML = "Usuario";  //cambiar modo de ejecución a usuario 
-    sliderQ.disabled=true;  //deshabilitar slider de quantum
-    for (let i = 0; i < (memoria.length); i++) {
-        if (proceso.length>0){
-            tiempoRestante=proceso[0][proceso[0].length-3];  
-            algoritmosProceso();   
-            terminoProceso=false;   
-            memoria[0]=proceso[0][proceso[0].length-6];     //acumulador de proceso 
-            indicador=indicadorProcesos();    //obtener indicador de proceso de la lista de procesos
-            indicador=ejecutar(indicador);   //ejecutar proceso y obtener indicador
-            indicador++;   //aumentar indicador de proceso
-            proceso[0][0]=indicador;   //asignar indicador a la primera posición del proceso
-            eliminarProceso(); 
-            mostrarMemoria(); 
-            console.log(proceso+"_"+tiempoRestante+"_"+sliderQ.value);
-        }else{
-            botonEjecutarAuto.removeAttribute("disabled");  //habilitar boton de ejecución automatica
-            sliderQ.disabled=false;  //deshabilitar slider de quantum
-            i=memoria.length;
-
-        }
-        if (pasoapaso==true){
-            ventanaContinuar();     //ventana para confirmar si se desea continuar en modo paso a paso
-        }
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    
-}
-
 //definir el valor seleccionado en el select
 function seleccionarProceso(){
     let select = document.getElementById("procesoElegido");
     let valor = select.value;
     return valor;
 }
-
+// función para saber la línea en la que se encuentra el proceso que se está ejecutando
 function indicadorProcesos(){
     if (proceso.length>0){
         return proceso[0][0];
     }
 }
-
+// función para saber si el proceso ya terminó y eliminarlo de la lista de procesos
 function eliminarProceso(){
     if (proceso[0][0]===proceso[0][proceso[0].length-1]){
         secuencia=0;
@@ -834,13 +804,13 @@ function eliminarProceso(){
         proceso.shift();
     }
 }
-
+// función para cambiar el tiempo restante con el valor de la ráfaga en el proceso que esté en ejecución 
 function Cambio(){
     let temp=proceso[0][proceso[0].length-3];
     proceso[0][proceso[0].length-3]=proceso[0][proceso[0].length-5];
     proceso[0][proceso[0].length-5]=temp;
 }
-
+// función para saber que algoritmo de planificación se va a usar 
 function algoritmosProceso(){
     let select = seleccionarProceso();
     if(select==="2"){
@@ -862,11 +832,11 @@ function algoritmosProceso(){
         envejecimiento();
     }
 }
-
+// función para comparar el tiempo de ejecución de los procesos
 function compararTiempoEjecucion(a,b){
     return a[a.length-3] - b[b.length-3];
 }
-
+// función para comparar la rafaga de los procesos
 function compararRafaga(a,b){
     if (a[a.length-5] === b[b.length-5]) {
         return a[a.length-4] - b[b.length-4];
@@ -874,7 +844,7 @@ function compararRafaga(a,b){
         return a[a.length-5] - b[b.length-5];
     }
 }
-
+// función para comparar la rafaga de los procesos con el tiempo de ejecución restante del proceso en ejecución
 function compararRafagaTiempo(proceso, tiempo) {
     // Encuentra el índice del vector con la posición 5 de menor valor que tiempo
     let menorIndice = 0;
@@ -894,11 +864,11 @@ function compararRafagaTiempo(proceso, tiempo) {
     // Retorna el vector de vectores actualizado
     return proceso;
 }
-
+// función para comparar la prioridad de los procesos y ordenarlos de mayor a menor
 function compararPrioridad(a,b){
     return b[a.length-2] - a[b.length-2];
 }
-
+// función para aumentar el tiempo de espera de los procesos y evitar la innanición
 function envejecimiento(){
     for (let i = 1; i < proceso.length; i++) {
         if(proceso[i][proceso[i].length-2]<99){
@@ -906,7 +876,7 @@ function envejecimiento(){
         }
     }
 }
-
+// función para ejecutar el algoritmo de round robin 
 function roundRobin(){
     //traer el valor del quantum
     if (quantum===parseInt(sliderQ.value)){
@@ -914,14 +884,51 @@ function roundRobin(){
         quantum=0;
     }
 }
-
+// función para desplazar el proceso a la izquierda los procesos del vector proceso cuando se cumple el quantum
 function desplazarIzquierda(proceso) {
     const primero = proceso.shift();
     proceso.push(primero);
 }
-  
-var log = [];
-var terminoProceso = true;
-var secuencia = 0;
-var tiempoRestante=0;
-var quantum=1;
+// función para inicializar la ejecución de los procesos 
+async function iniciar() {   
+    document.getElementById("programMode").innerHTML = "Usuario";  //cambiar modo de ejecución a usuario 
+    sliderQ.disabled=true;  //deshabilitar slider de quantum
+    for (let i = 0; i < (memoria.length); i++) {
+        if (proceso.length>0){
+            tiempoRestante=proceso[0][proceso[0].length-3];  
+            algoritmosProceso();   
+            terminoProceso=false;   
+            memoria[0]=proceso[0][proceso[0].length-6];     //acumulador de proceso 
+            indicador=indicadorProcesos();    //obtener indicador de proceso de la lista de procesos
+            indicador=ejecutar(indicador);   //ejecutar proceso y obtener indicador
+            indicador++;   //aumentar indicador de proceso
+            proceso[0][0]=indicador;   //asignar indicador a la primera posición del proceso
+            eliminarProceso(); 
+            mostrarMemoria();
+            mostrarProcesosEspera(); 
+        }else{
+            botonEjecutarAuto.removeAttribute("disabled");  //habilitar boton de ejecución automatica
+            sliderQ.disabled=false;  //deshabilitar slider de quantum
+            document.getElementById("procesosEspera").innerHTML = "";
+            i=memoria.length;
+
+        }
+        if (pasoapaso==true){
+            ventanaContinuar();     //ventana para confirmar si se desea continuar en modo paso a paso
+        }
+        // document.getElementById("procesosEspera").innerHTML = ""
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+}
+// funcion para mostrar la lista de procesos en espera 
+function mostrarProcesosEspera(){
+    let procesosEspera="";
+    if (proceso.length>1){
+        for (let i = 1; i < proceso.length; i++) {
+            procesosEspera=procesosEspera+"<br>"+proceso[i][1];
+        }
+    }
+    document.getElementById("procesosEspera").innerHTML = "<p>"+procesosEspera+"</p>";
+}
+

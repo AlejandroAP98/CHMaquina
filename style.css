@@ -265,7 +265,6 @@ body {
     background-color: #000000;
     font-size: 14px;
     top: 720px;
-    left: 280px;
     height: auto;
     outline: solid 2px #4a4a4a;
     outline-offset: 2px;
@@ -299,3 +298,33 @@ body {
     height: 70px;
     position: absolute;
 }
+
+#cardProcesos{
+    background-color: #000000;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 400px;
+    height: 200px;
+    left: 840px;
+    top: 830px;
+    font-size: 14px;
+    outline: solid 2px #4a4a4a;
+    outline-offset: 2px;
+    position: absolute;
+}
+
+#cardProcesos::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+#cardProcesos::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.409);
+    border-radius: 10px;
+}
+
+#cardProcesos::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
